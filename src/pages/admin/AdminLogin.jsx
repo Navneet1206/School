@@ -1,73 +1,68 @@
-import React, { useState } from 'react';
-import { toast } from 'react-hot-toast';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const AdminLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const AdminLogin = ({ setIsAuthenticated }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    console.log("Login attempt:", { username, password }); // Debug
     try {
-      const response = await axios.post('http://localhost:5000/api/admin/login', {
+      const response = await axios.post("http://localhost:5000/api/admin/login", {
         username,
         password,
       });
-
-      localStorage.setItem('adminToken', response.data.token);
-      toast.success('Login successful!');
-      navigate('/admin/admission-form'); // Navigate to the admission form
+      console.log("Token received:", response.data.token);
+      localStorage.setItem("adminToken", response.data.token);
+      setIsAuthenticated(true);
+      toast.success("Login successful!");
+      navigate("/admin/admission-form");
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
+      console.error("Login error:", error);
+      if (error.code === "ERR_NETWORK") {
+        toast.error("Cannot connect to server. Please ensure the backend is running.");
       } else {
-        toast.error('Invalid credentials');
+        toast.error(error.response?.data.message || "Invalid credentials");
       }
     } finally {
       setLoading(false);
     }
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Admin Login
-        </h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label className="block text-gray-700">Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3"
+              className="w-full p-2 border rounded"
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+          <div className="mb-4">
+            <label className="block text-gray-700">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3"
+              className="w-full p-2 border rounded"
               required
             />
           </div>
           <button
             type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

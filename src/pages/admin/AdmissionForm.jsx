@@ -65,10 +65,12 @@ function AdmissionForm() {
   const fetchAdmissions = async () => {
     try {
       const token = localStorage.getItem("adminToken");
+      console.log("Retrieved token:", token);
       if (!token) {
-        return toast.error("No token found");
+        toast.error("No authentication token found. Please log in.");
+        setIsAuthenticated(false);
+        return;
       }
-    
       const response = await axios.get(
         "http://localhost:5000/api/admin/admissions",
         {
@@ -77,17 +79,29 @@ function AdmissionForm() {
           },
         }
       );
+      console.log("Admissions data:", response.data); // Debug
       setAdmissions(response.data);
     } catch (error) {
       console.error("Error fetching admissions:", error);
-      if (error.response && error.response.status === 403) {
-        toast.error("Invalid token. Please log in again.");
+      if (error.response) {
+        console.log("Error response:", error.response.data); // Debug
+        if (error.response.status === 403) {
+          toast.error("Invalid or expired token. Please log in again.");
+          localStorage.removeItem("adminToken");
+          setIsAuthenticated(false);
+          navigate("/admin/login");
+        } else if (error.response.status === 401) {
+          toast.error("Authentication required. Please log in.");
+          setIsAuthenticated(false);
+          navigate("/admin/login");
+        } else {
+          toast.error(`Failed to fetch admissions: ${error.response.data.message || "Unknown error"}`);
+        }
       } else {
-        toast.error("Failed to fetch admissions");
+        toast.error("Network error. Please check your connection.");
       }
     }
   };
-
   const handleStatusUpdate = async (id, status) => {
     try {
       await axios.patch(
