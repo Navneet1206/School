@@ -33,9 +33,9 @@ const Navbar = () => {
                 src="/school-logo.png"
                 alt="School Logo"
               />
-              <span className="ml-2 text-white font-bold text-xl hidden sm:block">
+              {/* <span className="ml-2 text-white font-bold text-xl hidden sm:block">
                 Excellence Academy
-              </span>
+              </span> */}
             </div>
           </div>
 
