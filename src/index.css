@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+/* Styling for input elements */
+input {
+	border: 1px solid #ccc;
+	padding: 8px;
+	border-radius: 4px;
+}
+select {
+	border: 1px solid #ccc;
+	padding: 8px;
+	border-radius: 4px;
+}
+textarea {
+	border: 1px solid #ccc;
+	padding: 8px;
+	border-radius: 4px;
+}

@@ -10,7 +10,9 @@ import NoticeBoard from './pages/NoticeBoard';
 import Gallery from './pages/Gallery';
 import Contact from './pages/Contact';
 import Careers from './pages/Careers';
-
+import AdmissionForm from './pages/admin/AdmissionForm';
+import AdminHome from './pages/admin/Home'; // Assuming you have an admin home page
+import Notice from './pages/admin/Notice'; // Assuming you have an admin notice page
 const App = () => {
   return (
     <Router>
@@ -27,6 +29,10 @@ const App = () => {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/admin/admission-form" element={<AdmissionForm />} />
+            <Route path="/admin/home" element={<AdminHome />} /> {/* Admin Home Page */}
+            <Route path="/admin/notice" element={<Notice />} /> {/* Admin Notice Page */}
+            {/* Add more routes as needed */}
           </Routes>
         </main>
       </div>
