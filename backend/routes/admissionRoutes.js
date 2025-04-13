@@ -239,4 +239,5 @@ function generateAdminEmailTemplate(data) {
   `;
 }
 
+
 module.exports = router;

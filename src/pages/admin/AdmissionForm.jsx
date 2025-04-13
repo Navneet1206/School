@@ -58,21 +58,33 @@ function AdmissionForm() {
     setIsAuthenticated(false);
     setUsername("");
     setPassword("");
+    setAdmissions([]);
+    setSelectedAdmission(null);
   };
 
   const fetchAdmissions = async () => {
     try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        return toast.error("No token found");
+      }
+    
       const response = await axios.get(
         "http://localhost:5000/api/admin/admissions",
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       setAdmissions(response.data);
     } catch (error) {
-      toast.error("Failed to fetch admissions");
+      console.error("Error fetching admissions:", error);
+      if (error.response && error.response.status === 403) {
+        toast.error("Invalid token. Please log in again.");
+      } else {
+        toast.error("Failed to fetch admissions");
+      }
     }
   };
 
@@ -278,13 +290,12 @@ function AdmissionForm() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        admission.status === "approved"
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${admission.status === "approved"
                           ? "bg-green-100 text-green-800"
                           : admission.status === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
                     >
                       {admission.status.charAt(0).toUpperCase() +
                         admission.status.slice(1)}

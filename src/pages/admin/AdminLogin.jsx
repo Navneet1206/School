@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +21,7 @@ const AdminLogin = () => {
 
       localStorage.setItem('adminToken', response.data.token);
       toast.success('Login successful!');
+      navigate('/admin/admission-form'); // Navigate to the admission form
     } catch (error) {
       if (error.response && error.response.data.message) {
         toast.error(error.response.data.message);

@@ -12,6 +12,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 /*-------------------------------------------
   Admin Login Route
 ---------------------------------------------*/
+// Admin Login Route
+// Admin Login Route
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -40,6 +42,26 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+// GET all admissions (protected route)
+router.get("/admissions", async (req, res) => {
+  try {
+    // Check for valid JWT token
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
 
-
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      // Fetch admissions from the database
+      const admissions = await Admission.find().sort({ createdAt: -1 });
+      res.json(admissions);
+    } catch (error) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+  } catch (error) {
+    console.error("Error fetching admissions:", error);
+    res.status(500).json({ message: "Failed to fetch admissions" });
+  }
+});
 module.exports = router;
